@@ -1,6 +1,7 @@
 name: api
 description: A starting point for Dart libraries or applications.
 version: 0.2.0-dev.0
+publish_to: 'none'
 
 environment:
   sdk: ^3.11.4
@@ -8,6 +9,7 @@ environment:
 # Add regular dependencies here.
 dependencies:
   grpc: ^5.1.0
+  protobuf: ^6.0.0
 
 dev_dependencies:
   lints: ^6.0.0

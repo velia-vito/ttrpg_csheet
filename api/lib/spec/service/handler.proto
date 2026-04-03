@@ -1,0 +1,16 @@
+
+syntax = "proto3";
+
+import "data/identity.proto";
+import "common.proto";
+
+// Micro-Server for Sheet related data.
+service Handler {
+    rpc logIdentity (PlayerIdentity) returns (Empty);
+
+    // Prove identity and get a session token.
+    rpc handshake (PlayerIdentity) returns (AuthToken);
+
+    // Request connection information for a particular service.
+    rpc requestService (ServiceRequest) returns (ServiceInfo);
+}

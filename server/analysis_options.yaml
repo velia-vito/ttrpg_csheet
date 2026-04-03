@@ -13,18 +13,40 @@
 
 include: package:lints/recommended.yaml
 
-# Uncomment the following section to specify additional rules.
+analyzer:
+  plugins:
+    - custom_lint
+  exclude:
+    - '**/*.pb.dart'
+    - '**/*.pbjson.dart'
+    - '**/*.pbserver.dart'
+    - '**/*.pbenum.dart'
 
-# linter:
-#   rules:
-#     - camel_case_types
+linter:
+  rules:
+    - combinators_ordering
+    - directives_ordering
+    - prefer_interpolation_to_compose_strings
+    - public_member_api_docs
+    - require_trailing_commas
 
-# analyzer:
-#   exclude:
-#     - path/to/excluded/files/**
-
-# For more information about the core and recommended set of lints, see
-# https://dart.dev/go/core-lints
-
-# For additional information about configuring this file, see
-# https://dart.dev/guides/language/analysis-options
+custom_lint:
+  rules:
+    - newline_before_return
+    - cyclomatic_complexity:
+        max_complexity: 12
+    - function_lines_of_code:
+        max_lines: 100
+    - member_ordering:
+      alphabetize: true
+      order:
+        - private_fields
+        - public_fields
+        - getters_setters
+        - private_constructors
+        - factory_constructors
+        - public_constructors
+        - initialize_method
+        - overridden_methods
+        - public_methods
+        - private_methods

@@ -1,0 +1,15 @@
+# Dart
+.dart_tool/
+.packages
+
+# Generated
+docs/
+
+# Temporary
+.temp/
+
+# OS
+.DS_Store
+
+# Runtime Config
+config/

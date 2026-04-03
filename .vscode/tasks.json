@@ -1,0 +1,28 @@
+{
+	"version": "2.0.0",
+    "tasks": [
+		{
+			"label": "API: Regenerate APIs",
+			"type": "shell",
+			"options": {
+				"cwd": "${workspaceFolder}/api"
+			},
+			"command": [
+				"Remove-Item",
+				"-Path",
+				"./lib/build/*",
+				"-Recurse",
+				"-Force;",
+				"protoc",
+				"--proto_path",
+				"./lib/spec",
+				"--dart_out",
+				"grpc:./lib/build",
+				"./lib/spec/*.proto",
+				"./lib/spec/data/*.proto",
+				"./lib/spec/service/*.proto"
+			],
+			"problemMatcher": []
+		}
+	],
+}

@@ -90,7 +90,7 @@ class PlayerIdentity extends $pb.GeneratedMessage {
 class AuthToken extends $pb.GeneratedMessage {
   factory AuthToken({
     $core.String? token,
-    $core.bool? isApproved,
+    ApprovedAs? isApproved,
   }) {
     final result = create();
     if (token != null) result.token = token;
@@ -111,7 +111,8 @@ class AuthToken extends $pb.GeneratedMessage {
       _omitMessageNames ? '' : 'AuthToken',
       createEmptyInstance: create)
     ..aOS(1, _omitFieldNames ? '' : 'token')
-    ..aOB(2, _omitFieldNames ? '' : 'isApproved')
+    ..aE<ApprovedAs>(2, _omitFieldNames ? '' : 'isApproved',
+        enumValues: ApprovedAs.values)
     ..hasRequiredFields = false;
 
   @$core.Deprecated('See https://github.com/google/protobuf.dart/issues/998.')
@@ -142,9 +143,9 @@ class AuthToken extends $pb.GeneratedMessage {
   void clearToken() => $_clearField(1);
 
   @$pb.TagNumber(2)
-  $core.bool get isApproved => $_getBF(1);
+  ApprovedAs get isApproved => $_getN(1);
   @$pb.TagNumber(2)
-  set isApproved($core.bool value) => $_setBool(1, value);
+  set isApproved(ApprovedAs value) => $_setField(2, value);
   @$pb.TagNumber(2)
   $core.bool hasIsApproved() => $_has(1);
   @$pb.TagNumber(2)

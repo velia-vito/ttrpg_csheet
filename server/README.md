@@ -1,4 +1,4 @@
-# server
+# Server ()
 
 Dart gRPC server implementing the `Handler` service defined in `api/`. Handles player authentication, identity management, and service discovery for the micro-service backend.
 

@@ -6,12 +6,25 @@ message PlayerIdentity {
     string password = 2;
 }
 
+enum ApprovedAs {
+    APPROVED_AS_UNAPPROVED = 0;
+    APPROVED_AS_PLAYER = 1;
+    APPROVED_AS_DM = 2;
+}
+
 // Session authentication token.
 message AuthToken {
     optional string token = 1;
-    bool is_approved = 2;
+    ApprovedAs is_approved = 2;
 }
 
+
+// Enumeration of available services.
+enum Services {
+    UNKNOWN_SERVICE = 0;
+    STAT_SERVICE = 1;
+    MESSAGE_SERVICE = 2;
+}
 
 // Service information for connecting to a micro-service.
 message ServiceInfo {
@@ -22,11 +35,4 @@ message ServiceInfo {
 // Request for `ServiceInfo` on a particular service.
 message ServiceRequest {
     Services service_name = 1;
-}
-
-// Enumeration of available services.
-enum Services {
-    UNSPECIFIED_SERVICE = 0;
-    SHEET_SERVICE = 1;
-    MESSAGE_SERVICE = 2;
 }

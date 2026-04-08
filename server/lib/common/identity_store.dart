@@ -1,3 +1,4 @@
+import 'package:api/build/data/identity.pb.dart';
 import 'package:server/common/config_manager.dart';
 import 'package:server/common/logger.dart';
 
@@ -42,7 +43,11 @@ class IdentityStore with DiskBak {
   /// - `info` loaded N identities from disk
   Future<void> initialize() async {
     if (_isInitialized) {
-      _logger.log('IdentityStore already initialized; skipping.', LogLevel.warning);
+      _logger.log(
+        'IdentityStore already initialized; skipping.',
+        'IdentityStore/initialize',
+        LogLevel.warning,
+      );
 
       return;
     }
@@ -50,9 +55,17 @@ class IdentityStore with DiskBak {
     final found = await ConfigManager().load(this);
 
     if (!found) {
-      _logger.log('No identities file found; starting with empty store.', LogLevel.info);
+      _logger.log(
+        'No identities file found; starting with empty store.',
+        'IdentityStore/initialize',
+        LogLevel.info,
+      );
     } else {
-      _logger.log('Loaded ${_idStore.length} identities from disk.', LogLevel.info);
+      _logger.log(
+        'Loaded ${_idStore.length} identities from disk.',
+        'IdentityStore/initialize',
+        LogLevel.info,
+      );
     }
 
     _isInitialized = true;
@@ -81,25 +94,26 @@ class IdentityStore with DiskBak {
   /// ### Logs
   /// - `info` identity added
   /// - `warning` username already exists
-  Identity? addIdentity({
-    required String username,
-    required String identityToken,
-    bool isApproved = false,
-  }) {
+  Identity? addIdentity({required String username, required String identityToken}) {
     if (_idStore.containsKey(username)) {
       _logger.log(
         'Identity for username: $username already exists; Identity not created.',
+        'IdentityStore/addIdentity',
         LogLevel.warning,
       );
 
       return null;
     }
 
-    final identity = Identity._(username, identityToken, isApproved);
+    final identity = Identity._(username, identityToken, ApprovedAs.APPROVED_AS_UNAPPROVED);
     _idStore[username] = identity;
     saveToDisk();
 
-    _logger.log('Added new identity for username: $username', LogLevel.info);
+    _logger.log(
+      'Added new identity for username: $username',
+      'IdentityStore/addIdentity',
+      LogLevel.info,
+    );
 
     return identity;
   }
@@ -109,14 +123,18 @@ class IdentityStore with DiskBak {
   /// ### Logs
   /// - `info` identity approved
   /// - `warning` identity not found
-  void approveIdentity(Identity identity) {
+  void approveIdentity(Identity identity, [bool asDM = false]) {
     final stored = _lookup(identity, 'Approval');
     if (stored == null) return;
 
-    stored._isApproved = true;
+    stored._approvedAs = asDM ? ApprovedAs.APPROVED_AS_DM : ApprovedAs.APPROVED_AS_PLAYER;
     saveToDisk();
 
-    _logger.log('Approved identity for username: ${identity.username}', LogLevel.info);
+    _logger.log(
+      'Approved identity for username: ${identity.username}',
+      'IdentityStore/approveIdentity',
+      LogLevel.info,
+    );
   }
 
   /// Delete an identity from the store.
@@ -130,7 +148,11 @@ class IdentityStore with DiskBak {
     _idStore.remove(identity.username);
     saveToDisk();
 
-    _logger.log('Deleted identity for username: ${identity.username}', LogLevel.info);
+    _logger.log(
+      'Deleted identity for username: ${identity.username}',
+      'IdentityStore/deleteIdentity',
+      LogLevel.info,
+    );
   }
 
   /// Disapprove an identity.
@@ -142,10 +164,14 @@ class IdentityStore with DiskBak {
     final stored = _lookup(identity, 'Disapproval');
     if (stored == null) return;
 
-    stored._isApproved = false;
+    stored._approvedAs = ApprovedAs.APPROVED_AS_UNAPPROVED;
     saveToDisk();
 
-    _logger.log('Disapproved identity for username: ${identity.username}', LogLevel.info);
+    _logger.log(
+      'Disapproved identity for username: ${identity.username}',
+      'IdentityStore/disapproveIdentity',
+      LogLevel.info,
+    );
   }
 
   /// Get the [Identity] for a given username, or null if not found.
@@ -164,6 +190,7 @@ class IdentityStore with DiskBak {
     if (!stored.isApproved) {
       _logger.log(
         'Identity for username: ${identity.username} not approved; Session token logging failed.',
+        'IdentityStore/logSessionToken',
         LogLevel.warning,
       );
 
@@ -171,7 +198,11 @@ class IdentityStore with DiskBak {
     }
 
     stored._sessionToken = sessionToken;
-    _logger.log('Logged session token for username: ${identity.username}', LogLevel.info);
+    _logger.log(
+      'Logged session token for username: ${identity.username}',
+      'IdentityStore/logSessionToken',
+      LogLevel.info,
+    );
   }
 
   /// Save identities to disk via [ConfigManager].
@@ -189,6 +220,7 @@ class IdentityStore with DiskBak {
     if (stored == null) {
       _logger.log(
         'Identity for username: ${identity.username} not found; $operation failed.',
+        'IdentityStore/_lookup',
         LogLevel.warning,
       );
     }
@@ -199,9 +231,12 @@ class IdentityStore with DiskBak {
 
 /// Represents a player's identity.
 class Identity {
-  bool _isApproved;
+  ApprovedAs _approvedAs = ApprovedAs.APPROVED_AS_UNAPPROVED;
 
   String _sessionToken = '';
+
+  /// Whether this identity has been approved to access the server.
+  bool get isApproved => _approvedAs != ApprovedAs.APPROVED_AS_UNAPPROVED;
 
   /// bcrypt hash of `username::password`.
   final String identityToken;
@@ -210,21 +245,22 @@ class Identity {
   final String username;
 
   /// Whether this identity has been approved to access the server.
-  bool get isApproved => _isApproved;
+  ApprovedAs get approvedAs => _approvedAs;
 
   /// Session token for the current session; empty if not authenticated.
   String get sessionToken => _sessionToken;
 
   /// Private constructor — only [IdentityStore] creates instances.
-  Identity._(this.username, this.identityToken, this._isApproved);
+  Identity._(this.username, this.identityToken, this._approvedAs);
 
   /// Deserialize an [Identity] from a JSON map.
   factory Identity.fromJson(Map<String, dynamic> json) {
-    return Identity._(
-      json['username'] as String,
-      json['identityToken'] as String,
-      json['isApproved'] as bool,
+    final approvedAs = ApprovedAs.values.firstWhere(
+      (e) => e.name == json['approvedAs'] as String,
+      orElse: () => ApprovedAs.APPROVED_AS_UNAPPROVED,
     );
+
+    return Identity._(json['username'] as String, json['identityToken'] as String, approvedAs);
   }
 
   /// Serialize this [Identity] to a JSON map.
@@ -234,6 +270,6 @@ class Identity {
   Map<String, dynamic> toJson() => {
     'username': username,
     'identityToken': identityToken,
-    'isApproved': _isApproved,
+    'approvedAs': _approvedAs.name,
   };
 }

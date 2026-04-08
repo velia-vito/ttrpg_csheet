@@ -15,20 +15,35 @@ import 'dart:convert' as $convert;
 import 'dart:core' as $core;
 import 'dart:typed_data' as $typed_data;
 
+@$core.Deprecated('Use approvedAsDescriptor instead')
+const ApprovedAs$json = {
+  '1': 'ApprovedAs',
+  '2': [
+    {'1': 'APPROVED_AS_UNAPPROVED', '2': 0},
+    {'1': 'APPROVED_AS_PLAYER', '2': 1},
+    {'1': 'APPROVED_AS_DM', '2': 2},
+  ],
+};
+
+/// Descriptor for `ApprovedAs`. Decode as a `google.protobuf.EnumDescriptorProto`.
+final $typed_data.Uint8List approvedAsDescriptor = $convert.base64Decode(
+    'CgpBcHByb3ZlZEFzEhoKFkFQUFJPVkVEX0FTX1VOQVBQUk9WRUQQABIWChJBUFBST1ZFRF9BU1'
+    '9QTEFZRVIQARISCg5BUFBST1ZFRF9BU19ETRAC');
+
 @$core.Deprecated('Use servicesDescriptor instead')
 const Services$json = {
   '1': 'Services',
   '2': [
-    {'1': 'UNSPECIFIED_SERVICE', '2': 0},
-    {'1': 'SHEET_SERVICE', '2': 1},
+    {'1': 'UNKNOWN_SERVICE', '2': 0},
+    {'1': 'STAT_SERVICE', '2': 1},
     {'1': 'MESSAGE_SERVICE', '2': 2},
   ],
 };
 
 /// Descriptor for `Services`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List servicesDescriptor = $convert.base64Decode(
-    'CghTZXJ2aWNlcxIXChNVTlNQRUNJRklFRF9TRVJWSUNFEAASEQoNU0hFRVRfU0VSVklDRRABEh'
-    'MKD01FU1NBR0VfU0VSVklDRRAC');
+    'CghTZXJ2aWNlcxITCg9VTktOT1dOX1NFUlZJQ0UQABIQCgxTVEFUX1NFUlZJQ0UQARITCg9NRV'
+    'NTQUdFX1NFUlZJQ0UQAg==');
 
 @$core.Deprecated('Use playerIdentityDescriptor instead')
 const PlayerIdentity$json = {
@@ -49,7 +64,14 @@ const AuthToken$json = {
   '1': 'AuthToken',
   '2': [
     {'1': 'token', '3': 1, '4': 1, '5': 9, '9': 0, '10': 'token', '17': true},
-    {'1': 'is_approved', '3': 2, '4': 1, '5': 8, '10': 'isApproved'},
+    {
+      '1': 'is_approved',
+      '3': 2,
+      '4': 1,
+      '5': 14,
+      '6': '.ApprovedAs',
+      '10': 'isApproved'
+    },
   ],
   '8': [
     {'1': '_token'},
@@ -58,8 +80,8 @@ const AuthToken$json = {
 
 /// Descriptor for `AuthToken`. Decode as a `google.protobuf.DescriptorProto`.
 final $typed_data.Uint8List authTokenDescriptor = $convert.base64Decode(
-    'CglBdXRoVG9rZW4SGQoFdG9rZW4YASABKAlIAFIFdG9rZW6IAQESHwoLaXNfYXBwcm92ZWQYAi'
-    'ABKAhSCmlzQXBwcm92ZWRCCAoGX3Rva2Vu');
+    'CglBdXRoVG9rZW4SGQoFdG9rZW4YASABKAlIAFIFdG9rZW6IAQESLAoLaXNfYXBwcm92ZWQYAi'
+    'ABKA4yCy5BcHByb3ZlZEFzUgppc0FwcHJvdmVkQggKBl90b2tlbg==');
 
 @$core.Deprecated('Use serviceInfoDescriptor instead')
 const ServiceInfo$json = {

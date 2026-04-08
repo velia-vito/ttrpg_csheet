@@ -42,7 +42,12 @@ class ConfigManager {
 
       return true;
     } catch (e) {
-      _logger.log('Failed to load ${obj.configIdentifier}: $e', LogLevel.error);
+      _logger.log(
+        'Failed to load ${obj.configIdentifier}: $e',
+        'ConfigManager/load',
+        LogLevel.error,
+        true,
+      );
 
       return false;
     }
@@ -69,7 +74,12 @@ class ConfigManager {
       if (await live.exists()) await live.rename('$path.bak');
       await temp.rename(path);
     } catch (e) {
-      _logger.log('Failed to save ${obj.configIdentifier}: $e', LogLevel.error);
+      _logger.log(
+        'Failed to save ${obj.configIdentifier}: $e',
+        'ConfigManager/save',
+        LogLevel.error,
+        true,
+      );
     }
   }
 

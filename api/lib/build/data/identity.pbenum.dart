@@ -14,18 +14,40 @@ import 'dart:core' as $core;
 
 import 'package:protobuf/protobuf.dart' as $pb;
 
+class ApprovedAs extends $pb.ProtobufEnum {
+  static const ApprovedAs APPROVED_AS_UNAPPROVED =
+      ApprovedAs._(0, _omitEnumNames ? '' : 'APPROVED_AS_UNAPPROVED');
+  static const ApprovedAs APPROVED_AS_PLAYER =
+      ApprovedAs._(1, _omitEnumNames ? '' : 'APPROVED_AS_PLAYER');
+  static const ApprovedAs APPROVED_AS_DM =
+      ApprovedAs._(2, _omitEnumNames ? '' : 'APPROVED_AS_DM');
+
+  static const $core.List<ApprovedAs> values = <ApprovedAs>[
+    APPROVED_AS_UNAPPROVED,
+    APPROVED_AS_PLAYER,
+    APPROVED_AS_DM,
+  ];
+
+  static final $core.List<ApprovedAs?> _byValue =
+      $pb.ProtobufEnum.$_initByValueList(values, 2);
+  static ApprovedAs? valueOf($core.int value) =>
+      value < 0 || value >= _byValue.length ? null : _byValue[value];
+
+  const ApprovedAs._(super.value, super.name);
+}
+
 /// Enumeration of available services.
 class Services extends $pb.ProtobufEnum {
-  static const Services UNSPECIFIED_SERVICE =
-      Services._(0, _omitEnumNames ? '' : 'UNSPECIFIED_SERVICE');
-  static const Services SHEET_SERVICE =
-      Services._(1, _omitEnumNames ? '' : 'SHEET_SERVICE');
+  static const Services UNKNOWN_SERVICE =
+      Services._(0, _omitEnumNames ? '' : 'UNKNOWN_SERVICE');
+  static const Services STAT_SERVICE =
+      Services._(1, _omitEnumNames ? '' : 'STAT_SERVICE');
   static const Services MESSAGE_SERVICE =
       Services._(2, _omitEnumNames ? '' : 'MESSAGE_SERVICE');
 
   static const $core.List<Services> values = <Services>[
-    UNSPECIFIED_SERVICE,
-    SHEET_SERVICE,
+    UNKNOWN_SERVICE,
+    STAT_SERVICE,
     MESSAGE_SERVICE,
   ];
 

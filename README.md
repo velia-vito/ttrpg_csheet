@@ -9,4 +9,10 @@ A TTRPG character sheet application with a gRPC micro-service backend.
 | `client/` | Flutter front-end |
 | `config/` | Runtime configuration files, created on first server run |
 
-Run `dart doc` in `server/` or `client/` to generate API docs.
+## Documentation
+
+| component | Url |
+| --- | --- |
+| `server` | https://velia-vito.github.io/ttrpg_csheet |
+
+Alternatively, run `dart doc` in `server/` or `client/` to generate API docs.

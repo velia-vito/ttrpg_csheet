@@ -1,0 +1,51 @@
+name: Documentation Deploy
+run-name: Build & Deploy Documentation
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+on:
+  push:
+    branches:
+      - main
+
+# Ensure only one deploy runs at a time to prevent collisions
+concurrency:
+  group: "pages"
+  cancel-in-progress: true
+
+jobs:
+  docs:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Install dependencies
+        run: dart pub get
+        working-directory: server
+
+      - name: Build Server Docs
+        run: dart doc --output ../build/docs
+        working-directory: server
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './build/docs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

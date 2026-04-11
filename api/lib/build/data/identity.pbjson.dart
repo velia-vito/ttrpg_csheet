@@ -35,15 +35,15 @@ const Services$json = {
   '1': 'Services',
   '2': [
     {'1': 'UNKNOWN_SERVICE', '2': 0},
-    {'1': 'STAT_SERVICE', '2': 1},
-    {'1': 'MESSAGE_SERVICE', '2': 2},
+    {'1': 'ROLLER_SERVICE', '2': 1},
+    {'1': 'LOG_SERVICE', '2': 2},
   ],
 };
 
 /// Descriptor for `Services`. Decode as a `google.protobuf.EnumDescriptorProto`.
 final $typed_data.Uint8List servicesDescriptor = $convert.base64Decode(
-    'CghTZXJ2aWNlcxITCg9VTktOT1dOX1NFUlZJQ0UQABIQCgxTVEFUX1NFUlZJQ0UQARITCg9NRV'
-    'NTQUdFX1NFUlZJQ0UQAg==');
+    'CghTZXJ2aWNlcxITCg9VTktOT1dOX1NFUlZJQ0UQABISCg5ST0xMRVJfU0VSVklDRRABEg8KC0'
+    'xPR19TRVJWSUNFEAI=');
 
 @$core.Deprecated('Use playerIdentityDescriptor instead')
 const PlayerIdentity$json = {

@@ -22,8 +22,8 @@ message AuthToken {
 // Enumeration of available services.
 enum Services {
     UNKNOWN_SERVICE = 0;
-    STAT_SERVICE = 1;
-    MESSAGE_SERVICE = 2;
+    ROLLER_SERVICE = 1;
+    LOG_SERVICE = 2;
 }
 
 // Service information for connecting to a micro-service.

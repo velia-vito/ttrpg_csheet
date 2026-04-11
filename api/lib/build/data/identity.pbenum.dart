@@ -40,15 +40,15 @@ class ApprovedAs extends $pb.ProtobufEnum {
 class Services extends $pb.ProtobufEnum {
   static const Services UNKNOWN_SERVICE =
       Services._(0, _omitEnumNames ? '' : 'UNKNOWN_SERVICE');
-  static const Services STAT_SERVICE =
-      Services._(1, _omitEnumNames ? '' : 'STAT_SERVICE');
-  static const Services MESSAGE_SERVICE =
-      Services._(2, _omitEnumNames ? '' : 'MESSAGE_SERVICE');
+  static const Services ROLLER_SERVICE =
+      Services._(1, _omitEnumNames ? '' : 'ROLLER_SERVICE');
+  static const Services LOG_SERVICE =
+      Services._(2, _omitEnumNames ? '' : 'LOG_SERVICE');
 
   static const $core.List<Services> values = <Services>[
     UNKNOWN_SERVICE,
-    STAT_SERVICE,
-    MESSAGE_SERVICE,
+    ROLLER_SERVICE,
+    LOG_SERVICE,
   ];
 
   static final $core.List<Services?> _byValue =

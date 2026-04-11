@@ -183,6 +183,7 @@ class IdentityStore with DiskBak {
     for (final identity in _idStore.values) {
       if (identity.sessionToken == sessionToken) return identity;
     }
+
     return null;
   }
 

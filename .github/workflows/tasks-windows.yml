@@ -1,0 +1,54 @@
+name: Windows UWP Releases
+run-name: Build & Release for `Windows`
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  windows-tasks:
+    runs-on: windows-latest
+
+    steps:
+      - name: Clone repository
+        uses: actions/checkout@v4
+    
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          cache: true
+          channel: stable
+      
+      - name: Build Client (Windows)
+        working-directory: client
+        run: |
+          flutter build windows --release --obfuscate --split-debug-info=build/symbols --tree-shake-icons
+
+      - name: Build Server (Windows)
+        working-directory: server
+        run: |
+          flutter build windows --release --obfuscate --split-debug-info=build/symbols --tree-shake-icons
+
+      - name: Zip Client Release
+        run: |
+          tar -acf ./${{ github.event.repository.name }}_client_win64.zip -C ./client/build/windows/x64/runner/Release .
+
+      - name: Zip Server Release
+        run: |
+          tar -acf ./${{ github.event.repository.name }}_server_win64.zip -C ./server/build/windows/x64/runner/Release .
+
+      - uses: ncipollo/release-action@v1
+        with:
+          name: Bleeding Edge Release
+          tag: "bleeding-edge"
+          commit: main
+          allowUpdates: true
+          makeLatest: true
+          body: "Latest, bleeding-edge builds; probably buggy and unstable."
+          artifacts: "./${{ github.event.repository.name }}_client_win64.zip,./${{ github.event.repository.name }}_server_win64.zip"

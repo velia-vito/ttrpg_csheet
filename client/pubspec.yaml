@@ -36,6 +36,10 @@ dependencies:
   cupertino_icons: ^1.0.8
   api:
     path: ../api
+  ui:
+    path: ../ui
+  grpc: any
+  protobuf: any
 
 dev_dependencies:
   flutter_test:

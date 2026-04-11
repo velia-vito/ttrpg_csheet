@@ -9,6 +9,8 @@ environment:
 dependencies:
   api:
     path: ../api
+  ui:
+    path: ../ui
 
   bcrypt: ^1.2.0
   flutter:

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+import "data/dice.proto";
+
+service Roller {
+    rpc roll (DiceDefinition) returns (RollResult);
+}

@@ -1,0 +1,36 @@
+[
+  {
+    "label": "Dart Debug / Current File",
+    "adapter": "Dart",
+    "program": "$ZED_FILE",
+    "request": "launch",
+    "type": "dart",
+  },
+  {
+    "label": "Server: Attach (Port 8080)",
+    "adapter": "Dart",
+    "program": "$ZED_WORKTREE_ROOT/server/lib/main.dart",
+    "cwd": "$ZED_WORKTREE_ROOT/server",
+    "request": "attach",
+    "type": "flutter",
+    "args": ["--debug-uri", "http://127.0.0.1:8080"],
+  },
+  {
+    "label": "Client: Attach (Port 8081)",
+    "adapter": "Dart",
+    "program": "$ZED_WORKTREE_ROOT/client/lib/main.dart",
+    "cwd": "$ZED_WORKTREE_ROOT/client",
+    "request": "attach",
+    "type": "flutter",
+    "args": ["--debug-uri", "http://127.0.0.1:8081"],
+  },
+  {
+    "label": "UI: Launch & Bind (Arc/Zen)",
+    "adapter": "Dart",
+    "program": "$ZED_WORKTREE_ROOT/ui/lib/main.dart",
+    "cwd": "$ZED_WORKTREE_ROOT/ui",
+    "request": "launch",
+    "type": "flutter",
+    "args": ["-d", "chrome", "--wasm", "--web-port", "8082"],
+  },
+]

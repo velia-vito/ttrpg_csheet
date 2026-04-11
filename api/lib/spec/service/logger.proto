@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+import "data/log_entry.proto";
+import "common.proto";
+
+service Logger {
+    rpc log (LogEntry) returns (Empty);
+}
+

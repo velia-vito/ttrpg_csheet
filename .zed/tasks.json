@@ -1,0 +1,34 @@
+[
+  {
+    "label": "Documentation / client",
+    "allow_concurrent_runs": false,
+    "cwd": "$ZED_WORKTREE_ROOT/client",
+    "command": "dart",
+    "args": ["doc", "--output", "$ZED_WORKTREE_ROOT/client/doc"],
+  },
+  {
+    "label": "Documentation / server",
+    "allow_concurrent_runs": false,
+    "cwd": "$ZED_WORKTREE_ROOT/server",
+    "command": "dart",
+    "args": ["doc", "--output", "$ZED_WORKTREE_ROOT/server/doc"],
+  },
+  {
+    "label": "Documentation / ui",
+    "allow_concurrent_runs": false,
+    "cwd": "$ZED_WORKTREE_ROOT/ui",
+    "command": "dart",
+    "args": ["doc", "--output", "$ZED_WORKTREE_ROOT/ui/doc"],
+  },
+  {
+    "label": "gRPC / Re-Generate API",
+    "allow_concurrent_runs": false,
+    "cwd": "${ZED_WORKTREE_ROOT}/api",
+    "command": "powershell",
+    "args": [
+      "-NoProfile",
+      "-Command",
+      "Remove-Item -Path './lib/build/*' -Recurse -Force -ErrorAction SilentlyContinue; protoc --proto_path='./lib/spec' --dart_out=grpc:./lib/build ./lib/spec/*.proto ./lib/spec/data/*.proto ./lib/spec/service/*.proto",
+    ],
+  },
+]

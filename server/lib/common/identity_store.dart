@@ -1,6 +1,7 @@
 import 'package:api/build/data/identity.pb.dart';
+import 'package:api/build/data/log_entry.pb.dart';
 import 'package:server/common/config_manager.dart';
-import 'package:server/common/logger.dart';
+import 'package:server/service/logger_service.dart';
 
 /// Source-of-truth for player identity. Call [initialize] before use.
 class IdentityStore with DiskBak {
@@ -43,10 +44,10 @@ class IdentityStore with DiskBak {
   /// - `info` loaded N identities from disk
   Future<void> initialize() async {
     if (_isInitialized) {
-      _logger.log(
+      _logger.logLocally(
         'IdentityStore already initialized; skipping.',
         'IdentityStore/initialize',
-        LogLevel.warning,
+        LogLevel.WARNING,
       );
 
       return;
@@ -55,16 +56,16 @@ class IdentityStore with DiskBak {
     final found = await ConfigManager().load(this);
 
     if (!found) {
-      _logger.log(
+      _logger.logLocally(
         'No identities file found; starting with empty store.',
         'IdentityStore/initialize',
-        LogLevel.info,
+        LogLevel.INFO,
       );
     } else {
-      _logger.log(
+      _logger.logLocally(
         'Loaded ${_idStore.length} identities from disk.',
         'IdentityStore/initialize',
-        LogLevel.info,
+        LogLevel.INFO,
       );
     }
 
@@ -96,10 +97,10 @@ class IdentityStore with DiskBak {
   /// - `warning` username already exists
   Identity? addIdentity({required String username, required String identityToken}) {
     if (_idStore.containsKey(username)) {
-      _logger.log(
+      _logger.logLocally(
         'Identity for username: $username already exists; Identity not created.',
         'IdentityStore/addIdentity',
-        LogLevel.warning,
+        LogLevel.WARNING,
       );
 
       return null;
@@ -109,10 +110,10 @@ class IdentityStore with DiskBak {
     _idStore[username] = identity;
     saveToDisk();
 
-    _logger.log(
+    _logger.logLocally(
       'Added new identity for username: $username',
       'IdentityStore/addIdentity',
-      LogLevel.info,
+      LogLevel.INFO,
     );
 
     return identity;
@@ -130,10 +131,10 @@ class IdentityStore with DiskBak {
     stored._approvedAs = asDM ? ApprovedAs.APPROVED_AS_DM : ApprovedAs.APPROVED_AS_PLAYER;
     saveToDisk();
 
-    _logger.log(
+    _logger.logLocally(
       'Approved identity for username: ${identity.username}',
       'IdentityStore/approveIdentity',
-      LogLevel.info,
+      LogLevel.INFO,
     );
   }
 
@@ -148,10 +149,10 @@ class IdentityStore with DiskBak {
     _idStore.remove(identity.username);
     saveToDisk();
 
-    _logger.log(
+    _logger.logLocally(
       'Deleted identity for username: ${identity.username}',
       'IdentityStore/deleteIdentity',
-      LogLevel.info,
+      LogLevel.INFO,
     );
   }
 
@@ -167,15 +168,23 @@ class IdentityStore with DiskBak {
     stored._approvedAs = ApprovedAs.APPROVED_AS_UNAPPROVED;
     saveToDisk();
 
-    _logger.log(
+    _logger.logLocally(
       'Disapproved identity for username: ${identity.username}',
       'IdentityStore/disapproveIdentity',
-      LogLevel.info,
+      LogLevel.INFO,
     );
   }
 
   /// Get the [Identity] for a given username, or null if not found.
   Identity? getIdentity({required String username}) => _idStore[username];
+
+  /// Get the [Identity] for a given session token, or null if not found.
+  Identity? getIdentityBySession({required String sessionToken}) {
+    for (final identity in _idStore.values) {
+      if (identity.sessionToken == sessionToken) return identity;
+    }
+    return null;
+  }
 
   /// Store a session token against an identity.
   ///
@@ -188,20 +197,20 @@ class IdentityStore with DiskBak {
     if (stored == null) return;
 
     if (!stored.isApproved) {
-      _logger.log(
+      _logger.logLocally(
         'Identity for username: ${identity.username} not approved; Session token logging failed.',
         'IdentityStore/logSessionToken',
-        LogLevel.warning,
+        LogLevel.WARNING,
       );
 
       return;
     }
 
     stored._sessionToken = sessionToken;
-    _logger.log(
+    _logger.logLocally(
       'Logged session token for username: ${identity.username}',
       'IdentityStore/logSessionToken',
-      LogLevel.info,
+      LogLevel.INFO,
     );
   }
 
@@ -218,10 +227,10 @@ class IdentityStore with DiskBak {
     final stored = _idStore[identity.username];
 
     if (stored == null) {
-      _logger.log(
+      _logger.logLocally(
         'Identity for username: ${identity.username} not found; $operation failed.',
         'IdentityStore/_lookup',
-        LogLevel.warning,
+        LogLevel.WARNING,
       );
     }
 
@@ -235,9 +244,6 @@ class Identity {
 
   String _sessionToken = '';
 
-  /// Whether this identity has been approved to access the server.
-  bool get isApproved => _approvedAs != ApprovedAs.APPROVED_AS_UNAPPROVED;
-
   /// bcrypt hash of `username::password`.
   final String identityToken;
 
@@ -246,6 +252,9 @@ class Identity {
 
   /// Whether this identity has been approved to access the server.
   ApprovedAs get approvedAs => _approvedAs;
+
+  /// Whether this identity has been approved to access the server.
+  bool get isApproved => _approvedAs != ApprovedAs.APPROVED_AS_UNAPPROVED;
 
   /// Session token for the current session; empty if not authenticated.
   String get sessionToken => _sessionToken;

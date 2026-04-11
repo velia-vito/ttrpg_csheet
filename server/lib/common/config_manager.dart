@@ -1,7 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:server/common/logger.dart';
+import 'package:api/build/data/log_entry.pb.dart';
+import 'package:server/service/logger_service.dart';
 
 /// Manages reading and writing config files to `<server>/../config/`.
 ///
@@ -42,10 +43,10 @@ class ConfigManager {
 
       return true;
     } catch (e) {
-      _logger.log(
+      _logger.logLocally(
         'Failed to load ${obj.configIdentifier}: $e',
         'ConfigManager/load',
-        LogLevel.error,
+        LogLevel.ERROR,
         true,
       );
 
@@ -74,10 +75,10 @@ class ConfigManager {
       if (await live.exists()) await live.rename('$path.bak');
       await temp.rename(path);
     } catch (e) {
-      _logger.log(
+      _logger.logLocally(
         'Failed to save ${obj.configIdentifier}: $e',
         'ConfigManager/save',
-        LogLevel.error,
+        LogLevel.ERROR,
         true,
       );
     }

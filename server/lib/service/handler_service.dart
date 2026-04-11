@@ -4,12 +4,13 @@ import 'dart:typed_data';
 
 import 'package:api/build/common.pb.dart';
 import 'package:api/build/data/identity.pb.dart';
+import 'package:api/build/data/log_entry.pb.dart';
 import 'package:api/build/service/handler.pbgrpc.dart';
 import 'package:bcrypt/bcrypt.dart';
 import 'package:grpc/grpc.dart';
 import 'package:server/common/config_manager.dart';
 import 'package:server/common/identity_store.dart';
-import 'package:server/common/logger.dart';
+import 'package:server/service/logger_service.dart';
 
 /// gRPC service implementation for handling client requests. Call [initialize] before use.
 class HandlerService extends HandlerServiceBase with DiskBak {
@@ -45,16 +46,16 @@ class HandlerService extends HandlerServiceBase with DiskBak {
     final configSuccess = results[1] as bool;
 
     if (configSuccess) {
-      _logger.log(
+      _logger.logLocally(
         'HandlerService loaded services config.',
         'HandlerService/initialize',
-        LogLevel.info,
+        LogLevel.INFO,
       );
     } else {
-      _logger.log(
+      _logger.logLocally(
         'HandlerService services config not found.',
         'HandlerService/initialize',
-        LogLevel.error,
+        LogLevel.ERROR,
         true,
       );
 
@@ -64,10 +65,10 @@ class HandlerService extends HandlerServiceBase with DiskBak {
 
       await _config.save(this);
 
-      _logger.log(
+      _logger.logLocally(
         'Created services config with default values.',
         'HandlerService/initialize',
-        LogLevel.info,
+        LogLevel.INFO,
       );
 
       throw StateError('HandlerService services config not found.');
@@ -89,39 +90,39 @@ class HandlerService extends HandlerServiceBase with DiskBak {
   /// - `warning` identity not yet approved
   Future<AuthToken> handshake(ServiceCall call, PlayerIdentity playerId) async {
     if (!_isInitialized) {
-      _logger.log(
+      _logger.logLocally(
         'Handshake called before HandlerService initialized.',
         'HandlerService/handshake',
-        LogLevel.error,
+        LogLevel.ERROR,
         true,
       );
       throw StateError('handshake called before HandlerService initialized');
     }
 
-    _logger.log(
+    _logger.logLocally(
       'Handshake request received for username: ${playerId.username}',
       'HandlerService/handshake',
-      LogLevel.info,
+      LogLevel.INFO,
     );
 
     // Look up stored identity and verify the bcrypt hash.
     final identity = _store.getIdentity(username: playerId.username);
 
     if (identity == null || !BCrypt.checkpw(playerId.password, identity.identityToken)) {
-      _logger.log(
+      _logger.logLocally(
         'Authentication failed for username: ${playerId.username}',
         'HandlerService/handshake',
-        LogLevel.warning,
+        LogLevel.WARNING,
       );
 
       return AuthToken(token: '', isApproved: ApprovedAs.APPROVED_AS_UNAPPROVED);
     }
 
     if (!identity.isApproved) {
-      _logger.log(
+      _logger.logLocally(
         'Identity not approved for username: ${playerId.username}',
         'HandlerService/handshake',
-        LogLevel.warning,
+        LogLevel.WARNING,
       );
 
       return AuthToken(token: '', isApproved: ApprovedAs.APPROVED_AS_UNAPPROVED);
@@ -131,10 +132,10 @@ class HandlerService extends HandlerServiceBase with DiskBak {
     final authToken = genToken();
     _store.logSessionToken(identity, authToken);
 
-    _logger.log(
+    _logger.logLocally(
       'Authentication successful for username: ${playerId.username}',
       'HandlerService/handshake',
-      LogLevel.info,
+      LogLevel.INFO,
     );
 
     return AuthToken(token: authToken, isApproved: identity.approvedAs);
@@ -151,10 +152,10 @@ class HandlerService extends HandlerServiceBase with DiskBak {
   /// - `warning` username already exists (via [IdentityStore])
   Future<Empty> logIdentity(ServiceCall call, PlayerIdentity playerId) async {
     if (!_isInitialized) {
-      _logger.log(
+      _logger.logLocally(
         'logIdentity called before HandlerService initialized.',
         'HandlerService/logIdentity',
-        LogLevel.error,
+        LogLevel.ERROR,
         true,
       );
       throw StateError('logIdentity called before HandlerService initialized.');

@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+message LogEntry {
+    string message = 1;
+    string source = 2;
+    LogLevel level = 3;
+    bool isPriotiy = 4;
+    int64 timestamp = 5;
+}
+
+enum LogLevel {
+    INFO = 0;
+    WARNING = 1;
+    ERROR = 2;
+}
